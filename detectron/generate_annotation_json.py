@@ -13,6 +13,9 @@ import os
 import xml.etree.cElementTree as eT
 import cv2
 
+"""
+The reference of COCO data set structure
+"""
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -43,7 +46,8 @@ def parse_args():
     parser.add_argument(
         '--classes',
         dest='classes',
-        default=['redhat', 'yellowhat', 'bluehat', 'whitehat', 'blackhat', 'hair', '', '', '', '', ''],
+        default=['redhat', 'yellowhat', 'bluehat', 'whitehat', 'blackhat', 'greenhat', 'hair', 'belt', 'red', 'orange',
+                 'yellow', 'green', 'lightgreen'],
         help='保存图片路径,如果不要那就直接是None',
         type=list
     )
@@ -100,6 +104,8 @@ def get_xml_objects(xml_path_, annotation_info_):
                  "id": object_id})
             object_id += 1
     return xml_annotations, object_id, category_count
+
+#TODO Dataset distribution
 
 
 def get_json_objects(json_path_, annotation_info_):
