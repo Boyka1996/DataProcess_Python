@@ -86,7 +86,7 @@ public class XmlAndSegToDetectronJson {
 					// 获取category Id
 					int category_id = getArrayId(categoriesName, name.getText());// category_id
 					if (category_id == -1) {
-						System.out.println("！！！！！！！！！！！！！！！！！！发现未定义类别" + name.getText());
+						System.out.println("！！！！！！！！！！！！！！！ ！！！发现未定义类别" + name.getText());
 						break;
 					}
 					Element bndbox = object.element("bndbox");
