@@ -73,7 +73,7 @@ def get_xml_objects(xml_path_, annotation_info_):
     tree = eT.ElementTree(file=xml_path_)
     root = tree.getroot()
     for obj in root:
-        if obj.tag is 'object':
+        if obj.tag == 'object':
             if obj[0].text in category_count:
                 category_count[obj[0].text] += 1
             else:
