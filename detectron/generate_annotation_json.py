@@ -33,14 +33,14 @@ def parse_args():
         '--xml_path',
         dest='xml_path',
         default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/xml/',
-        help='xml路径如果没有的话那就是None',
+        help='xml路径',
         type=str
     )
     parser.add_argument(
         '--json_path',
         dest='json_path',
         default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/json/',
-        help='json路径,如果没有的话那就是None',
+        help='json路径',
         type=str
     )
     parser.add_argument(
@@ -48,22 +48,36 @@ def parse_args():
         dest='classes',
         default=['redhat', 'yellowhat', 'bluehat', 'whitehat', 'blackhat', 'greenhat', 'hair', 'belt', 'red', 'orange',
                  'yellow', 'green', 'lightgreen'],
-        help='保存图片路径,如果不要那就直接是None',
+        help='类别，必须有',
         type=list
     )
     parser.add_argument(
         '--classes_mapping',
         dest='classes_mapping',
         default=None,
+        help='将其他标签映射到训练标签里面',
+        type=str
+    )
+    parser.add_argument(
+        '--train_path',
+        dest='train_path',
+        default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/safety_helmet_train.json',
         help='保存图片路径,如果不要那就直接是None',
         type=str
     )
     parser.add_argument(
-        '--save_path',
-        dest='save_path',
-        default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/safety_helmet.json',
-        help='保存图片路径,如果不要那就直接是None',
+        '--val_path',
+        dest='val_path',
+        default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/safety_helmet_val.json',
+        help='验证集路径,如果不要那就直接是None',
         type=str
+    )
+    parser.add_argument(
+        '--train_val_ratio',
+        dest='train_val_ratio',
+        default=5,
+        help='训练集验证集比值，如果不要验证集这里就是None',
+        type=int
     )
 
     return parser.parse_args()
@@ -104,8 +118,6 @@ def get_xml_objects(xml_path_, annotation_info_):
                  "id": object_id})
             object_id += 1
     return xml_annotations, object_id, category_count
-
-#TODO Dataset distribution
 
 
 def get_json_objects(json_path_, annotation_info_):
@@ -171,17 +183,11 @@ def get_image_info(image_path_, image_id_):
             "width": image_shape[1], "date_captured": "", "flickr_url": "", "id": image_id_}
 
 
-def generate_annotation(args_):
-    image_path = args_.image_path
-    xml_path = args_.xml_path
-    json_path = args_.json_path
-    save_path = args_.save_path
+def generate_annotation(args_, image_list_, save_path_):
     if args_.classes_mapping:
         category_mapping = eval(args_.classes_mapping)
     else:
         category_mapping = {}
-
-    logger.info(save_path)
 
     info = {}
     licenses = []
@@ -193,7 +199,7 @@ def generate_annotation(args_):
     object_id = 1
     category_count = {}
 
-    for image_name in os.listdir(image_path):
+    for image_name in image_list_:
         annotation_info = {
             "image_id": image_id,
             "object_id": object_id,
@@ -202,32 +208,43 @@ def generate_annotation(args_):
             "category_count": category_count
         }
         if_labeled = False
-        if xml_path:
-            xml_file = os.path.join(xml_path, image_name.replace('.jpg', '.xml'))
+        if args_.xml_path:
+            xml_file = os.path.join(args_.xml_path, image_name.replace('.jpg', '.xml'))
             if os.path.exists(xml_file):
                 if_labeled = True
                 xml_objects, object_id, category_count = get_xml_objects(xml_file, annotation_info)
                 annotations = annotations + xml_objects
-        if json_path:
-            json_file = os.path.join(json_path, image_name.replace('.jpg', '.json'))
+        if args_.json_path:
+            json_file = os.path.join(args_.json_path, image_name.replace('.jpg', '.json'))
             if os.path.exists(json_file):
                 if_labeled = True
                 json_objects, object_id, category_count = get_json_objects(json_file, annotation_info)
                 annotations = annotations + json_objects
         if if_labeled:
             logger.info(image_name)
-            image_id += 1
-            image_info = get_image_info(os.path.join(image_path, image_name), image_id)
+            image_info = get_image_info(os.path.join(args_.image_path, image_name), image_id)
             images.append(image_info)
+            image_id += 1
     data_set_annotation = {"info": info, "licenses": licenses, "images": images, "annotations": annotations,
                            "categories": categories}
-    with open(save_path, 'w') as f:
-        logger.info(save_path)
+    with open(save_path_, 'w') as f:
+        logger.info(save_path_)
         f.write(json.dumps(data_set_annotation))
         logger.info("***********************************")
         logger.info(category_count)
 
 
+def data_set_generation(args_):
+    image_list = os.listdir(args_.image_path)
+    if args_.train_val_ratio:
+        val_image_list = image_list[0:len(image_list):args_.train_val_ratio + 1]
+        train_image_list = list(set(image_list).difference(set(val_image_list)))
+        generate_annotation(args_, val_image_list, args_.val_path)
+        generate_annotation(args_, train_image_list, args_.train_path)
+    else:
+        generate_annotation(args_, image_list, args_.train_path)
+
+
 if __name__ == '__main__':
     path_args = parse_args()
-    generate_annotation(path_args)
+    data_set_generation(path_args)
