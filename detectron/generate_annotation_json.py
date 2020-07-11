@@ -11,10 +11,12 @@ import json
 import logging
 import os
 import xml.etree.cElementTree as eT
+
 import cv2
 
 """
 The reference of COCO data set structure
+https://blog.csdn.net/u012609509/article/details/88680841
 """
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -25,29 +27,29 @@ def parse_args():
     parser.add_argument(
         '--image_path',
         dest='image_path',
-        default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/images/',
+        default='/home/chase/datasets/safety_helmet/images/',
         help='图片路径',
         type=str
     )
     parser.add_argument(
         '--xml_path',
         dest='xml_path',
-        default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/xml/',
+        default='/home/chase/datasets/safety_helmet/xml/',
         help='xml路径',
         type=str
     )
     parser.add_argument(
         '--json_path',
         dest='json_path',
-        default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/json/',
+        default='/home/chase/datasets/safety_helmet/json/',
         help='json路径',
         type=str
     )
     parser.add_argument(
         '--classes',
         dest='classes',
-        default=['redhat', 'yellowhat', 'bluehat', 'whitehat', 'blackhat', 'greenhat', 'hair', 'belt', 'red', 'orange',
-                 'yellow', 'green', 'lightgreen'],
+            default=['redhat', 'yellowhat', 'bluehat', 'whitehat', 'blackhat', 'greenhat', 'hair', 'belt', 'red', 'orange',
+                     'yellow', 'green', 'lightgreen'],
         help='类别，必须有',
         type=list
     )
@@ -61,21 +63,21 @@ def parse_args():
     parser.add_argument(
         '--train_path',
         dest='train_path',
-        default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/safety_helmet_train.json',
+        default='/home/chase/datasets/safety_helmet/safety_helmet_train.json',
         help='保存图片路径,如果不要那就直接是None',
         type=str
     )
     parser.add_argument(
         '--val_path',
         dest='val_path',
-        default='F:datasets/LNSafetyControl/safety_helmet/safety_helmet/safety_helmet_val.json',
+        default='/home/chase/datasets/safety_helmet/safety_helmet_val.json',
         help='验证集路径,如果不要那就直接是None',
         type=str
     )
     parser.add_argument(
         '--train_val_ratio',
         dest='train_val_ratio',
-        default=5,
+        default=10,
         help='训练集验证集比值，如果不要验证集这里就是None',
         type=int
     )
@@ -109,11 +111,11 @@ def get_xml_objects(xml_path_, annotation_info_):
             xmax = int(obj[1][2].text)
             ymax = int(obj[1][3].text)
             xml_annotations.append(
-                {"segmentation": [[xmin, ymin, xmax, ymin, xmax, ymax, ymin, ymax]],
+                {"segmentation": [[xmin, ymin, xmax, ymin, xmax, ymax, xmin, ymax]],
                  "area": (xmax - xmin) * (ymax - ymin),
                  "iscrowd": 0,
                  "image_id": annotation_info_.get("image_id"),
-                 "bbox": [xmin, ymin, xmax - - xmin, ymax - ymin],
+                 "bbox": [xmin, ymin, xmax - xmin, ymax - ymin],
                  "category_id": category_id,
                  "id": object_id})
             object_id += 1
@@ -157,7 +159,7 @@ def get_json_objects(json_path_, annotation_info_):
              "area": (xmax - xmin) * (ymax - ymin),
              "iscrowd": 0,
              "image_id": annotation_info_.get("image_id"),
-             "bbox": [xmin, ymin, xmax - - xmin, ymax - ymin],
+             "bbox": [xmin, ymin, xmax - xmin, ymax - ymin],
              "category_id": category_id,
              "id": object_id})
         object_id += 1
