@@ -13,6 +13,7 @@ import numpy as np
 import os
 import xml.etree.ElementTree as ET
 import cv2
+from PIL import Image
 
 
 def convert_from_json(json_path):
@@ -48,7 +49,7 @@ def xml_indent(elem, level=0):
 
 
 def generate_xml(image, tar, bboxes):
-    shape = cv2.imread(image)
+    shape = Image.open(image).size
     print(shape)
     annotation = ET.Element('annotation')
 
@@ -61,6 +62,7 @@ def generate_xml(image, tar, bboxes):
     height.text = str(shape[1])
     size.append(width)
     size.append(height)
+    annotation.append(size)
 
     for bbox in bboxes:
         obj = ET.Element('object')
@@ -71,9 +73,9 @@ def generate_xml(image, tar, bboxes):
         xmax = ET.Element('xmax')
         ymax = ET.Element('ymax')
         xmin.text = str(bbox[1])
-        ymin.text = str(bbox[1])
-        xmax.text = str(bbox[1])
-        ymax.text = str(bbox[1])
+        ymin.text = str(bbox[2])
+        xmax.text = str(bbox[3])
+        ymax.text = str(bbox[4])
         bndbox.append(xmin)
         bndbox.append(xmax)
         bndbox.append(ymin)
@@ -88,11 +90,13 @@ def generate_xml(image, tar, bboxes):
 
 
 if __name__ == '__main__':
-    a = 'E:/Dataset/鲁能安全管控数据集/hat/images/1a6aaaa5e1c49a75e4df9d1825d61409.jpg'
-    b = cv2.imread(a)
-    print(b)
-    c = b.shape
-    print(b.shape)
+    a = 'E:/Dataset/鲁能安全管控数据集/hat/temp/images/00c8108f9c53a590026b773d28345e3f.jpg'
+    # b = cv2.imread(a)
+    # print(b)
+    # c = b.shape
+    # print(b.shape)
+    img = Image.open(a)
+    img.show()
     src = "E:/Dataset/鲁能安全管控数据集/hat/temp/Annotations"
     tar = "E:/Dataset/鲁能安全管控数据集/hat/temp/xml"
     img = "E:/Dataset/鲁能安全管控数据集/hat/temp/images"
