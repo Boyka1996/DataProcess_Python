@@ -76,6 +76,7 @@ def generate_xml(image, tar, bboxes):
         ymin.text = str(bbox[2])
         xmax.text = str(bbox[3])
         ymax.text = str(bbox[4])
+        name.text=bbox[0]
         bndbox.append(xmin)
         bndbox.append(xmax)
         bndbox.append(ymin)
