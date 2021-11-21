@@ -25,14 +25,14 @@ def parse_args():
     parser.add_argument(
         '--image_path',
         dest='image_path',
-        default='E:/PythonProjects/ies-fan-data/fan-data/images/',
+        default='C:/Users/Boyka/Desktop/ies-data/power-station-fire/images/',
         help='图片路径',
         type=str
     )
     parser.add_argument(
         '--xml_path',
         dest='xml_path',
-        default='E:/PythonProjects/ies-fan-data/fan-data/Annotations/',
+        default='C:/Users/Boyka/Desktop/ies-data/power-station-fire/Annotations/',
         help='xml路径',
         type=str
     )
@@ -40,7 +40,7 @@ def parse_args():
     parser.add_argument(
         '--classes',
         dest='classes',
-        default=['open', 'fengfa', 'close'],
+        default=['transformer'],
         help='类别，必须有',
         type=list
     )
@@ -54,7 +54,7 @@ def parse_args():
     parser.add_argument(
         '--train_path',
         dest='train_path',
-        default='E:/PythonProjects/ies-fan-data/fan-data/fan.json',
+        default='C:/Users/Boyka/Desktop/ies-data/power-station-fire/power_station_fire.json',
         help='训练集标签路径,如果不要那就直接是None',
         type=str
     )
@@ -127,6 +127,7 @@ def get_categories(super_categories, categories):
 
 def get_image_info(image_path_, image_id_):
     image_shape = cv2.imread(image_path_).shape
+    print(image_shape)
     return {"license": 0, "file_name": os.path.basename(image_path_), "coco_url": "", "height": image_shape[0],
             "width": image_shape[1], "date_captured": "", "flickr_url": "", "id": image_id_}
 
