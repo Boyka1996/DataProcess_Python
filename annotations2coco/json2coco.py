@@ -24,14 +24,14 @@ def parse_args():
     parser.add_argument(
         '--image_path',
         dest='image_path',
-        default='C:/Users/Boyka/Desktop/ies-data/crane-tree/images/',
+        default='C:/Users/Boyka/Desktop/ln/leg_belt/images/',
         help='图片路径',
         type=str
     )
     parser.add_argument(
         '--json_path',
         dest='json_path',
-        default='C:/Users/Boyka/Desktop/ies-data/crane-tree/json/',
+        default='C:/Users/Boyka/Desktop/ln/leg_belt/json/',
         help='json路径',
         type=str
     )
@@ -39,21 +39,21 @@ def parse_args():
     parser.add_argument(
         '--classes',
         dest='classes',
-        default=['cable', 'trees', 'crane'],
+        default=['belt'],
         help='类别，必须有',
         type=list
     )
     parser.add_argument(
         '--classes_mapping',
         dest='classes_mapping',
-        default=None,
+        default='{"weilan": "fence"}',
         help='将其他标签映射到训练标签里面',
         type=str
     )
     parser.add_argument(
         '--train_path',
         dest='train_path',
-        default='C:/Users/Boyka/Desktop/ies-data/crane-tree/wild_fire.json',
+        default='C:/Users/Boyka/Desktop/ln/leg_belt/leg_belt.json',
         help='训练集标签路径,如果不要那就直接是None',
         type=str
     )
