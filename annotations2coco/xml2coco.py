@@ -25,14 +25,14 @@ def parse_args():
     parser.add_argument(
         '--image_path',
         dest='image_path',
-        default='C:/Users/Boyka/Desktop/ln/belt2661/images/',
+        default='C:/Users/Boyka/Desktop/ln/belt/images/',
         help='图片路径',
         type=str
     )
     parser.add_argument(
         '--xml_path',
         dest='xml_path',
-        default='C:/Users/Boyka/Desktop/ln/belt2661/xml/',
+        default='C:/Users/Boyka/Desktop/ln/belt/Annotations/',
         help='xml路径',
         type=str
     )
@@ -40,7 +40,7 @@ def parse_args():
     parser.add_argument(
         '--classes',
         dest='classes',
-        default=['belt'],
+        default=['scaffolding'],
         help='类别，必须有',
         type=list
     )
@@ -54,7 +54,7 @@ def parse_args():
     parser.add_argument(
         '--train_path',
         dest='train_path',
-        default='C:/Users/Boyka/Desktop/ln/belt2661/belt2661.json',
+        default='C:/Users/Boyka/Desktop/ln/belt/belt.json',
         help='训练集标签路径,如果不要那就直接是None',
         type=str
     )
@@ -83,6 +83,8 @@ def get_xml_objects(xml_path_, annotation_info_):
     xml_annotations = []
     tree = eT.ElementTree(file=xml_path_)
     root = tree.getroot()
+    if len(root) > 2:
+        print(111111)
     for obj in root:
         if obj.tag == 'object':
             if obj[0].text in category_count:
